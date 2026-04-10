@@ -37,25 +37,7 @@ async function enviarConfirmacionCliente(reserva) {
       from: 'Sa Terrassa <onboarding@resend.dev>',
       to: reserva.email,
       subject: `✅ Reserva confirmada - Sa Terrassa #${reserva.id}`,
-      html: `
-        <div style="font-family: Georgia, serif; max-width: 600px; margin: 0 auto; background: #0D1B2A; color: #ffffff; padding: 40px;">
-          <h1 style="color: #C9A84C; font-weight: 300; font-size: 2rem; margin-bottom: 5px;"><em>Sa</em> Terrassa</h1>
-          <p style="color: rgba(255,255,255,0.5); font-size: 0.8rem; letter-spacing: 0.2em; text-transform: uppercase; margin-bottom: 30px;">Cuina Mediterrània · El Arenal, Mallorca</p>
-          <div style="border: 1px solid rgba(201,168,76,0.3); padding: 30px; margin-bottom: 30px;">
-            <h2 style="color: #C9A84C; font-weight: 300; margin-bottom: 20px;">Reserva confirmada</h2>
-            <p style="color: rgba(255,255,255,0.8); margin-bottom: 10px;">Hola <strong>${reserva.nombre}</strong>,</p>
-            <p style="color: rgba(255,255,255,0.7); margin-bottom: 25px;">Tu reserva ha sido confirmada. Te esperamos con mucho gusto.</p>
-            <table style="width: 100%; border-collapse: collapse;">
-              <tr><td style="color: rgba(255,255,255,0.4); font-size: 0.75rem; text-transform: uppercase; padding: 8px 0; border-bottom: 1px solid rgba(255,255,255,0.1);">Referencia</td><td style="color: #C9A84C; padding: 8px 0; border-bottom: 1px solid rgba(255,255,255,0.1);">#${reserva.id}</td></tr>
-              <tr><td style="color: rgba(255,255,255,0.4); font-size: 0.75rem; text-transform: uppercase; padding: 8px 0; border-bottom: 1px solid rgba(255,255,255,0.1);">Fecha</td><td style="color: #ffffff; padding: 8px 0; border-bottom: 1px solid rgba(255,255,255,0.1);">${reserva.fecha}</td></tr>
-              <tr><td style="color: rgba(255,255,255,0.4); font-size: 0.75rem; text-transform: uppercase; padding: 8px 0; border-bottom: 1px solid rgba(255,255,255,0.1);">Hora</td><td style="color: #ffffff; padding: 8px 0; border-bottom: 1px solid rgba(255,255,255,0.1);">${reserva.hora}</td></tr>
-              <tr><td style="color: rgba(255,255,255,0.4); font-size: 0.75rem; text-transform: uppercase; padding: 8px 0;">Personas</td><td style="color: #ffffff; padding: 8px 0;">${reserva.personas}</td></tr>
-            </table>
-          </div>
-          <p style="color: rgba(255,255,255,0.5); font-size: 0.8rem;">Para cancelar contacta: 📞 +34 971 XXX XXX | ✉️ hola@saterrassa.com</p>
-          <p style="color: rgba(255,255,255,0.3); font-size: 0.75rem; margin-top: 20px;">Passeig de la Mar, 47 · El Arenal, Mallorca</p>
-        </div>
-      `
+      html: `<div style="font-family:Georgia,serif;max-width:600px;margin:0 auto;background:#0D1B2A;color:#fff;padding:40px;"><h1 style="color:#C9A84C;font-weight:300;"><em>Sa</em> Terrassa</h1><p style="color:rgba(255,255,255,0.5);font-size:0.8rem;text-transform:uppercase;letter-spacing:0.2em;">Cuina Mediterrània · El Arenal, Mallorca</p><div style="border:1px solid rgba(201,168,76,0.3);padding:30px;margin:20px 0;"><h2 style="color:#C9A84C;font-weight:300;">Reserva confirmada ✅</h2><p>Hola <strong>${reserva.nombre}</strong>, tu reserva ha sido confirmada.</p><table style="width:100%;"><tr><td style="color:rgba(255,255,255,0.4);padding:8px 0;border-bottom:1px solid rgba(255,255,255,0.1);">Referencia</td><td style="color:#C9A84C;padding:8px 0;border-bottom:1px solid rgba(255,255,255,0.1);">#${reserva.id}</td></tr><tr><td style="color:rgba(255,255,255,0.4);padding:8px 0;border-bottom:1px solid rgba(255,255,255,0.1);">Fecha</td><td style="padding:8px 0;border-bottom:1px solid rgba(255,255,255,0.1);">${reserva.fecha}</td></tr><tr><td style="color:rgba(255,255,255,0.4);padding:8px 0;border-bottom:1px solid rgba(255,255,255,0.1);">Hora</td><td style="padding:8px 0;border-bottom:1px solid rgba(255,255,255,0.1);">${reserva.hora}</td></tr><tr><td style="color:rgba(255,255,255,0.4);padding:8px 0;">Personas</td><td style="padding:8px 0;">${reserva.personas}</td></tr></table></div><p style="color:rgba(255,255,255,0.4);font-size:0.8rem;">Para cancelar: +34 971 XXX XXX | hola@saterrassa.com</p></div>`
     });
     console.log('Email confirmación enviado a:', reserva.email);
   } catch (error) {
@@ -69,22 +51,7 @@ async function enviarNotificacionRestaurante(reserva) {
       from: 'Sa Terrassa Bot <onboarding@resend.dev>',
       to: process.env.ADMIN_EMAIL,
       subject: `🔔 Nueva reserva #${reserva.id} - ${reserva.nombre} (${reserva.personas} personas)`,
-      html: `
-        <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 30px; border: 1px solid #e0e0e0;">
-          <h2 style="color: #C9A84C;">Nueva reserva en Sa Terrassa</h2>
-          <table style="width: 100%; border-collapse: collapse; margin-top: 20px;">
-            <tr style="background: #f5f5f5;"><td style="padding: 10px; font-weight: bold;">ID</td><td style="padding: 10px;">#${reserva.id}</td></tr>
-            <tr><td style="padding: 10px; font-weight: bold;">Nombre</td><td style="padding: 10px;">${reserva.nombre}</td></tr>
-            <tr style="background: #f5f5f5;"><td style="padding: 10px; font-weight: bold;">Fecha</td><td style="padding: 10px;">${reserva.fecha}</td></tr>
-            <tr><td style="padding: 10px; font-weight: bold;">Hora</td><td style="padding: 10px;">${reserva.hora}</td></tr>
-            <tr style="background: #f5f5f5;"><td style="padding: 10px; font-weight: bold;">Personas</td><td style="padding: 10px;">${reserva.personas}</td></tr>
-            <tr><td style="padding: 10px; font-weight: bold;">Teléfono</td><td style="padding: 10px;">${reserva.telefono || '—'}</td></tr>
-            <tr style="background: #f5f5f5;"><td style="padding: 10px; font-weight: bold;">Email</td><td style="padding: 10px;">${reserva.email || '—'}</td></tr>
-            <tr><td style="padding: 10px; font-weight: bold;">Notas</td><td style="padding: 10px;">${reserva.notas || '—'}</td></tr>
-          </table>
-          <p style="margin-top: 20px;"><a href="https://saterrassa-backend-production.up.railway.app/admin">Ver panel de administración</a></p>
-        </div>
-      `
+      html: `<div style="font-family:Arial,sans-serif;max-width:600px;margin:0 auto;padding:30px;border:1px solid #e0e0e0;"><h2 style="color:#C9A84C;">Nueva reserva en Sa Terrassa</h2><table style="width:100%;border-collapse:collapse;margin-top:20px;"><tr style="background:#f5f5f5;"><td style="padding:10px;font-weight:bold;">ID</td><td style="padding:10px;">#${reserva.id}</td></tr><tr><td style="padding:10px;font-weight:bold;">Nombre</td><td style="padding:10px;">${reserva.nombre}</td></tr><tr style="background:#f5f5f5;"><td style="padding:10px;font-weight:bold;">Fecha</td><td style="padding:10px;">${reserva.fecha}</td></tr><tr><td style="padding:10px;font-weight:bold;">Hora</td><td style="padding:10px;">${reserva.hora}</td></tr><tr style="background:#f5f5f5;"><td style="padding:10px;font-weight:bold;">Personas</td><td style="padding:10px;">${reserva.personas}</td></tr><tr><td style="padding:10px;font-weight:bold;">Email</td><td style="padding:10px;">${reserva.email || '—'}</td></tr><tr style="background:#f5f5f5;"><td style="padding:10px;font-weight:bold;">Notas</td><td style="padding:10px;">${reserva.notas || '—'}</td></tr></table><p style="margin-top:20px;"><a href="https://saterrassa-backend-production.up.railway.app/admin">Ver panel de administración</a></p></div>`
     });
     console.log('Notificación enviada al restaurante');
   } catch (error) {
@@ -104,8 +71,7 @@ function hayDisponibilidad(fecha, hora, personas) {
 }
 
 function crearReserva(datos) {
-  const stmt = db.prepare('INSERT INTO reservas (nombre, telefono, email, fecha, hora, personas, ocasion, notas) VALUES (?, ?, ?, ?, ?, ?, ?, ?)');
-  const result = stmt.run(datos.nombre, datos.telefono || '', datos.email || '', datos.fecha, datos.hora, datos.personas, datos.ocasion || '', datos.notas || '');
+  const result = db.prepare('INSERT INTO reservas (nombre, telefono, email, fecha, hora, personas, ocasion, notas) VALUES (?, ?, ?, ?, ?, ?, ?, ?)').run(datos.nombre, datos.telefono || '', datos.email || '', datos.fecha, datos.hora, datos.personas, datos.ocasion || '', datos.notas || '');
   return result.lastInsertRowid;
 }
 
@@ -113,45 +79,22 @@ const tools = [
   {
     name: 'comprobar_disponibilidad',
     description: 'Comprueba si hay disponibilidad para una fecha, hora y número de personas',
-    input_schema: {
-      type: 'object',
-      properties: {
-        fecha: { type: 'string', description: 'Fecha en formato YYYY-MM-DD' },
-        hora: { type: 'string', description: 'Hora en formato HH:MM' },
-        personas: { type: 'number', description: 'Número de personas' }
-      },
-      required: ['fecha', 'hora', 'personas']
-    }
+    input_schema: { type: 'object', properties: { fecha: { type: 'string' }, hora: { type: 'string' }, personas: { type: 'number' } }, required: ['fecha', 'hora', 'personas'] }
   },
   {
     name: 'hacer_reserva',
     description: 'Hace una reserva si hay disponibilidad',
-    input_schema: {
-      type: 'object',
-      properties: {
-        nombre: { type: 'string' },
-        telefono: { type: 'string' },
-        email: { type: 'string', description: 'Email del cliente para confirmación' },
-        fecha: { type: 'string' },
-        hora: { type: 'string' },
-        personas: { type: 'number' },
-        ocasion: { type: 'string' },
-        notas: { type: 'string' }
-      },
-      required: ['nombre', 'fecha', 'hora', 'personas']
-    }
+    input_schema: { type: 'object', properties: { nombre: { type: 'string' }, telefono: { type: 'string' }, email: { type: 'string' }, fecha: { type: 'string' }, hora: { type: 'string' }, personas: { type: 'number' }, ocasion: { type: 'string' }, notas: { type: 'string' } }, required: ['nombre', 'fecha', 'hora', 'personas'] }
   },
   {
     name: 'ver_horas_disponibles',
     description: 'Muestra las horas disponibles para una fecha y número de personas',
-    input_schema: {
-      type: 'object',
-      properties: {
-        fecha: { type: 'string' },
-        personas: { type: 'number' }
-      },
-      required: ['fecha', 'personas']
-    }
+    input_schema: { type: 'object', properties: { fecha: { type: 'string' }, personas: { type: 'number' } }, required: ['fecha', 'personas'] }
+  },
+  {
+    name: 'cancelar_reserva',
+    description: 'Cancela una reserva verificando el nombre y la fecha/hora para evitar errores',
+    input_schema: { type: 'object', properties: { nombre: { type: 'string', description: 'Nombre completo del cliente' }, fecha: { type: 'string', description: 'Fecha en formato YYYY-MM-DD' }, hora: { type: 'string', description: 'Hora en formato HH:MM' } }, required: ['nombre', 'fecha', 'hora'] }
   }
 ];
 
@@ -164,7 +107,9 @@ Carta: Pa amb oli (8€), Croquetas sobrasada (12€), Pulpo brasa (18€), Gazp
 
 Sin gluten: tumbet, lubina, pulpo, gazpacho. CON gluten: croquetas, ensaimada. Vegetariano: tumbet, pa amb oli, gazpacho, quesos, gató, sorbete.
 
-RESERVAS: Pide nombre, fecha, hora, personas y opcionalmente email para confirmación. USA siempre las herramientas para comprobar disponibilidad y hacer reservas.
+RESERVAS: Pide nombre, fecha, hora, personas y opcionalmente email. USA siempre las herramientas para comprobar disponibilidad y hacer reservas.
+
+CANCELACIONES: Pide nombre completo y fecha/hora de la reserva. Confirma los datos antes de cancelar. USA cancelar_reserva para verificar y cancelar.
 
 Hoy es ${new Date().toISOString().split('T')[0]}. Responde amable y breve, máximo 4 líneas.`;
 
@@ -180,12 +125,18 @@ function processTool(toolName, toolInput) {
     const reserva = { id, ...toolInput };
     enviarConfirmacionCliente(reserva);
     enviarNotificacionRestaurante(reserva);
-    return JSON.stringify({ success: true, id, mensaje: `Reserva #${id} confirmada. Email de confirmación enviado.` });
+    return JSON.stringify({ success: true, id, mensaje: `Reserva #${id} confirmada.` });
   }
   if (toolName === 'ver_horas_disponibles') {
     const horas = ['09:00','09:30','10:00','10:30','11:00','11:30','12:00','12:30','13:00','13:30','14:00','14:30','15:00','15:30','16:00','16:30','17:00','17:30','18:00','18:30','19:00','19:30','20:00','20:30','21:00','21:30','22:00','22:30'];
     const disponibles = horas.filter(h => hayDisponibilidad(toolInput.fecha, h, toolInput.personas));
     return JSON.stringify({ horas_disponibles: disponibles, mensaje: disponibles.length > 0 ? `Horas disponibles: ${disponibles.join(', ')}` : 'No hay disponibilidad para ese día.' });
+  }
+  if (toolName === 'cancelar_reserva') {
+    const reserva = db.prepare('SELECT * FROM reservas WHERE LOWER(nombre) = LOWER(?) AND fecha = ? AND hora = ? AND estado != ?').get(toolInput.nombre, toolInput.fecha, toolInput.hora, 'cancelada');
+    if (!reserva) return JSON.stringify({ success: false, mensaje: 'No se encontró ninguna reserva con esos datos. Verifica el nombre completo y la fecha/hora.' });
+    db.prepare('UPDATE reservas SET estado = ? WHERE id = ?').run('cancelada', reserva.id);
+    return JSON.stringify({ success: true, mensaje: `Reserva #${reserva.id} de ${reserva.nombre} el ${reserva.fecha} a las ${reserva.hora} cancelada correctamente.` });
   }
   return JSON.stringify({ error: 'Herramienta no encontrada' });
 }
