@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Sa Terrassa · Panel de Reservas</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300&family=Jost:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+:root{--gold:#C9A84C;--navy:#0D1B2A;--sand:#F5F0E8;--white:#fff}
+body{font-family:'Jost',sans-serif;background:var(--sand);color:var(--navy);min-height:100vh}
+header{background:var(--navy);padding:1.2rem 2rem;display:flex;justify-content:space-between;align-items:center}
+.logo{font-family:'Cormorant Garamond',serif;font-size:1.4rem;color:var(--gold);letter-spacing:0.15em}
+.logo em{font-style:italic}
+.header-right{font-size:0.75rem;color:rgba(255,255,255,0.5);letter-spacing:0.1em;text-transform:uppercase}
+.main{padding:2rem}
+.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:1rem;margin-bottom:2rem}
+.stat{background:var(--white);padding:1.2rem 1.5rem;border-left:3px solid var(--gold)}
+.stat-num{font-family:'Cormorant Garamond',serif;font-size:2.5rem;font-weight:300;color:var(--navy);line-height:1}
+.stat-label{font-size:0.68rem;letter-spacing:0.15em;text-transform:uppercase;color:#888;margin-top:0.3rem}
+.filters{display:flex;gap:1rem;margin-bottom:1.5rem;flex-wrap:wrap;align-items:center}
+.filter-btn{background:transparent;border:1px solid rgba(13,27,42,0.2);padding:0.5rem 1.2rem;font-size:0.75rem;letter-spacing:0.1em;text-transform:uppercase;cursor:pointer;font-family:'Jost',sans-serif;transition:all 0.2s}
+.filter-btn.active,.filter-btn:hover{background:var(--navy);color:var(--white);border-color:var(--navy)}
+.filter-date{border:1px solid rgba(13,27,42,0.2);padding:0.5rem 1rem;font-family:'Jost',sans-serif;font-size:0.82rem;outline:none;background:var(--white)}
+table{width:100%;background:var(--white);border-collapse:collapse}
+th{background:var(--navy);color:rgba(255,255,255,0.7);font-size:0.68rem;letter-spacing:0.15em;text-transform:uppercase;padding:0.9rem 1rem;text-align:left;font-weight:400}
+td{padding:0.9rem 1rem;border-bottom:1px solid rgba(13,27,42,0.06);font-size:0.85rem}
+tr:hover td{background:rgba(201,168,76,0.05)}
+.badge{display:inline-block;padding:0.25rem 0.7rem;font-size:0.65rem;letter-spacing:0.1em;text-transform:uppercase;font-weight:500}
+.badge-confirmada{background:rgba(39,130,90,0.1);color:#1a6b45}
+.badge-cancelada{background:rgba(220,53,69,0.1);color:#a01020}
+.btn-cancelar{background:transparent;border:1px solid rgba(220,53,69,0.3);color:#c0392b;padding:0.3rem 0.8rem;font-size:0.7rem;cursor:pointer;font-family:'Jost',sans-serif;transition:all 0.2s;letter-spacing:0.05em}
+.btn-cancelar:hover{background:#c0392b;color:white;border-color:#c0392b}
+.empty{text-align:center;padding:3rem;color:#888;font-size:0.9rem}
+.refresh-btn{background:var(--gold);color:var(--navy);border:none;padding:0.5rem 1.2rem;font-size:0.75rem;letter-spacing:0.1em;text-transform:uppercase;cursor:pointer;font-family:'Jost',sans-serif}
+</style>
+</head>
+<body>
+<header>
+  <div class="logo"><em>Sa</em> Terrassa · Panel de Reservas</div>
+  <div class="header-right">Administración</div>
+</header>
+<div class="main">
+  <div class="stats">
+    <div class="stat"><div class="stat-num" id="statHoy">0</div><div class="stat-label">Reservas hoy</div></div>
+    <div class="stat"><div class="stat-num" id="statPersonas">0</div><div class="stat-label">Personas hoy</div></div>
+    <div class="stat"><div class="stat-num" id="statTotal">0</div><div class="stat-label">Total reservas</div></div>
+    <div class="stat"><div class="stat-num" id="statOcupacion">0%</div><div class="stat-label">Ocupación media hoy</div></div>
+  </div>
+  <div class="filters">
+    <button class="filter-btn active" onclick="filtrar('todas',this)">Todas</button>
+    <button class="filter-btn" onclick="filtrar('hoy',this)">Hoy</button>
+    <button class="filter-btn" onclick="filtrar('confirmadas',this)">Confirmadas</button>
+    <button class="filter-btn" onclick="filtrar('canceladas',this)">Canceladas</button>
+    <input type="date" class="filter-date" id="filtroFecha" onchange="filtrarFecha(this.value)">
+    <button class="refresh-btn" onclick="cargarReservas()">↻ Actualizar</button>
+  </div>
+  <table>
+    <thead>
+      <tr>
+        <th>#</th>
+        <th>Nombre</th>
+        <th>Teléfono</th>
+        <th>Fecha</th>
+        <th>Hora</th>
+        <th>Personas</th>
+        <th>Ocasión</th>
+        <th>Notas</th>
+        <th>Estado</th>
+        <th>Acción</th>
+      </tr>
+    </thead>
+    <tbody id="tablaReservas">
+      <tr><td colspan="10" class="empty">Cargando reservas...</td></tr>
+    </tbody>
+  </table>
+</div>
+<script>
+let todasReservas = [];
+let filtroActual = 'todas';
+
+async function cargarReservas() {
+  try {
+    const res = await fetch('/admin/reservas');
+    todasReservas = await res.json();
+    actualizarStats();
+    renderTabla(todasReservas);
+  } catch(e) {
+    console.error(e);
+  }
+}
+
+function actualizarStats() {
+  const hoy = new Date().toISOString().split('T')[0];
+  const reservasHoy = todasReservas.filter(r => r.fecha === hoy && r.estado !== 'cancelada');
+  const personasHoy = reservasHoy.reduce((a,r) => a + r.personas, 0);
+  const horasUnicas = [...new Set(reservasHoy.map(r => r.hora))];
+  const ocupacionMedia = horasUnicas.length > 0 ? Math.round((personasHoy / (horasUnicas.length * 30)) * 100) : 0;
+
+  document.getElementById('statHoy').textContent = reservasHoy.length;
+  document.getElementById('statPersonas').textContent = personasHoy;
+  document.getElementById('statTotal').textContent = todasReservas.filter(r => r.estado !== 'cancelada').length;
+  document.getElementById('statOcupacion').textContent = ocupacionMedia + '%';
+}
+
+function filtrar(tipo, btn) {
+  filtroActual = tipo;
+  document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  document.getElementById('filtroFecha').value = '';
+  const hoy = new Date().toISOString().split('T')[0];
+  let filtradas = todasReservas;
+  if (tipo === 'hoy') filtradas = todasReservas.filter(r => r.fecha === hoy);
+  if (tipo === 'confirmadas') filtradas = todasReservas.filter(r => r.estado === 'confirmada');
+  if (tipo === 'canceladas') filtradas = todasReservas.filter(r => r.estado === 'cancelada');
+  renderTabla(filtradas);
+}
+
+function filtrarFecha(fecha) {
+  if (!fecha) { cargarReservas(); return; }
+  document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+  const filtradas = todasReservas.filter(r => r.fecha === fecha);
+  renderTabla(filtradas);
+}
+
+function renderTabla(reservas) {
+  const tbody = document.getElementById('tablaReservas');
+  if (reservas.length === 0) {
+    tbody.innerHTML = '<tr><td colspan="10" class="empty">No hay reservas para mostrar</td></tr>';
+    return;
+  }
+  tbody.innerHTML = reservas.map(r => `
+    <tr>
+      <td>#${r.id}</td>
+      <td><strong>${r.nombre}</strong></td>
+      <td>${r.telefono || '—'}</td>
+      <td>${r.fecha}</td>
+      <td>${r.hora}</td>
+      <td>${r.personas} personas</td>
+      <td>${r.ocasion || '—'}</td>
+      <td>${r.notas || '—'}</td>
+      <td><span class="badge badge-${r.estado}">${r.estado}</span></td>
+      <td>${r.estado === 'confirmada' ? `<button class="btn-cancelar" onclick="cancelar(${r.id})">Cancelar</button>` : '—'}</td>
+    </tr>
+  `).join('');
+}
+
+async function cancelar(id) {
+  if (!confirm('¿Cancelar esta reserva?')) return;
+  await fetch('/admin/reservas/' + id + '/cancelar', { method: 'PATCH' });
+  cargarReservas();
+}
+
+cargarReservas();
+setInterval(cargarReservas, 30000);
+</script>
+</body>
+</html>
