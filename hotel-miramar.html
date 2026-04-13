@@ -630,7 +630,7 @@ footer{background:#1C2B1E;padding:4rem 3rem 2rem;color:rgba(255,255,255,0.6)}
   </button>
 </div>
 
-<script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script>
+<script data-cfasync="false">
 const BACKEND_URL = 'https://saterrassa-backend-production.up.railway.app';
 let chatOpen = false;
 let isLoading = false;
@@ -699,4 +699,17 @@ function sendMsg() {
   callBackend(msg);
 }
 
-func
+function quickMsg(msg) {
+  if (isLoading) return;
+  document.getElementById('suggestions').style.display = 'none';
+  addMsg(msg, 'user');
+  isLoading = true;
+  callBackend(msg);
+}
+
+document.addEventListener('DOMContentLoaded', function() {
+  document.getElementById('chatToggle').addEventListener('click', toggleChat);
+});
+</script>
+</body>
+</html>
